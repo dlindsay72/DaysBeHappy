@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  WelcomVC.swift
 //  DaysBeHappy
 //
 //  Created by Dan Lindsay on 2016-10-17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class WelcomeVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
