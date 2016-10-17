@@ -1,5 +1,5 @@
 //
-//  WelcomVC.swift
+//  MemoriesVC.swift
 //  DaysBeHappy
 //
 //  Created by Dan Lindsay on 2016-10-17.
@@ -8,26 +8,21 @@
 
 import UIKit
 
-class WelcomeVC: UIViewController {
-    
-    @IBOutlet weak var helpLabel: UILabel!
+class MemoriesVC: UICollectionViewController {
     
     
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    @IBAction func requestPermissions(_ sender: UIButton) {
-        
-    }
+    
 
 }
-
