@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import Photos
+import AVFoundation
+import Speech
 
 class MemoriesVC: UICollectionViewController {
     
@@ -19,10 +22,25 @@ class MemoriesVC: UICollectionViewController {
         // Do any additional setup after loading the view.
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func checkPermissions() {
+        
+        let photosAuthorized = PHPhotoLibrary.authorizationStatus() == .authorized
+        let recordingAuthorized = AVAudioSession.sharedInstance().recordPermission() == .granted
+        let transcribeAuthorized = SFSpeechRecognizer.authorizationStatus() == .authorized
+        
+        let authorized = photosAuthorized && recordingAuthorized && transcribeAuthorized
+        
+        if authorized == false {
+            if let vc = storyboard?.instantiateViewController(withIdentifier: "FirstRun") {
+                navigationController?.present(vc, animated: true)
+            }
+        }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        checkPermissions()
+    }
 
 }
