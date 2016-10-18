@@ -10,6 +10,8 @@ import UIKit
 import Photos
 import AVFoundation
 import Speech
+import CoreSpotlight
+import MobileCoreServices
 
 class MemoriesVC: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UICollectionViewDelegateFlowLayout, AVAudioRecorderDelegate {
     
@@ -292,10 +294,34 @@ class MemoriesVC: UICollectionViewController, UIImagePickerControllerDelegate, U
                 
                 do {
                     try text.write(to: transcription, atomically: true, encoding: String.Encoding.utf8)
+                    self.indexMemory(memory: memory, text: text)
+                    
                     
                 } catch {
                     print("Failed to save transcription")
                 }
+            }
+        }
+    }
+    
+    func indexMemory(memory: URL, text: String) {
+        
+        let attributeset = CSSearchableItemAttributeSet(itemContentType: kUTTypeText as String)
+        
+        attributeset.title = "Good Times Memory"
+        attributeset.contentDescription = text
+        attributeset.thumbnailURL = thumbnailURL(for: memory)
+        
+        let item = CSSearchableItem(uniqueIdentifier: memory.path, domainIdentifier: "com.namasteapps", attributeSet: attributeset)
+        
+        item.expirationDate = Date.distantFuture
+        
+        CSSearchableIndex.default().indexSearchableItems([item])  { error in
+            
+            if let error = error {
+                print("Indexing error: \(error.localizedDescription)")
+            } else {
+                print("search item successfully indexed: \(text)")
             }
         }
     }
