@@ -92,9 +92,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
-                                <searchBar contentMode="redraw" fixedFrame="YES" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="aTo-pO-eq7">
-                                    <frame key="frameInset" height="44"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="aTo-pO-eq7">
                                     <textInputTraits key="textInputTraits"/>
                                     <userDefinedRuntimeAttributes>
                                         <userDefinedRuntimeAttribute type="color" keyPath="searchField.textColor">
@@ -106,6 +104,11 @@
                                     </connections>
                                 </searchBar>
                             </subviews>
+                            <constraints>
+                                <constraint firstItem="aTo-pO-eq7" firstAttribute="top" secondItem="qjI-MJ-VQD" secondAttribute="top" id="G7L-1v-NgM"/>
+                                <constraint firstItem="aTo-pO-eq7" firstAttribute="leading" secondItem="qjI-MJ-VQD" secondAttribute="leading" id="L3a-fm-O9l"/>
+                                <constraint firstAttribute="trailing" secondItem="aTo-pO-eq7" secondAttribute="trailing" id="S7U-OS-eoh"/>
+                            </constraints>
                         </collectionReusableView>
                         <connections>
                             <outlet property="dataSource" destination="hj8-Ua-vny" id="dkF-1K-1rT"/>

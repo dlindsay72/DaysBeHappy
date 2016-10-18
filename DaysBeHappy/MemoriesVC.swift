@@ -18,6 +18,7 @@ class MemoriesVC: UICollectionViewController, UIImagePickerControllerDelegate, U
     var activeMemory: URL!
     var audioRecorder: AVAudioRecorder?
     var recordingURL: URL!
+    var audioPlayer: AVAudioPlayer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -217,6 +218,8 @@ class MemoriesVC: UICollectionViewController, UIImagePickerControllerDelegate, U
     
     func recordmemory() {
         
+        audioPlayer?.stop()
+        
         collectionView?.backgroundColor = UIColor(red: 0.5, green: 0, blue: 0, alpha: 1)
         
         let recordingSession = AVAudioSession.sharedInstance()
@@ -251,7 +254,7 @@ class MemoriesVC: UICollectionViewController, UIImagePickerControllerDelegate, U
         
         if success {
             do {
-                let memoryAudioURL = activeMemory.appendingPathComponent("m4a")
+                let memoryAudioURL = activeMemory.appendingPathExtension("m4a")
                 let fm = FileManager.default
                 
                 if fm.fileExists(atPath: memoryAudioURL.path) {
@@ -270,10 +273,59 @@ class MemoriesVC: UICollectionViewController, UIImagePickerControllerDelegate, U
     
     func transcribeAudio(memory: URL) {
         
+        let audio = audioURL(for: memory)
+        let transcription = transcriptionURL(for: memory)
+        
+        let recognizer = SFSpeechRecognizer()
+        let request = SFSpeechURLRecognitionRequest(url: audio)
+        
+        recognizer?.recognitionTask(with: request) { [unowned self] (result, error) in
+            
+            guard let result = result else {
+                print("There was an error: \(error)")
+                return
+            }
+            
+            if result.isFinal {
+                
+                let text = result.bestTranscription.formattedString
+                
+                do {
+                    try text.write(to: transcription, atomically: true, encoding: String.Encoding.utf8)
+                    
+                } catch {
+                    print("Failed to save transcription")
+                }
+            }
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-       return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Header", for: indexPath)
+        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Header", for: indexPath)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let memory = memories[indexPath.row]
+        let fm = FileManager.default
+        
+        do {
+            let audioName = audioURL(for: memory)
+            let transcriptionName = transcriptionURL(for: memory)
+            
+            if fm.fileExists(atPath: audioName.path) {
+                audioPlayer = try AVAudioPlayer(contentsOf: audioName)
+                audioPlayer?.play()
+            }
+            
+            if fm.fileExists(atPath: transcriptionName.path) {
+                let contents = try String(contentsOf: transcriptionName)
+                
+                print(contents)
+            }
+        } catch {
+            print("Error loading audio")
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -281,7 +333,7 @@ class MemoriesVC: UICollectionViewController, UIImagePickerControllerDelegate, U
         if section == 1 {
             return CGSize.zero
         } else {
-            return CGSize(width: 0, height: 0)
+            return CGSize(width: 0, height:50)
         }
     }
         
